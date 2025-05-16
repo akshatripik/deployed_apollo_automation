@@ -1,0 +1,98 @@
+[
+  {
+    "id": "54a2c0187468693a7e735c3a",
+    "title": "Asesor de Inteligencia de Mercado",
+    "translated_title": "Market Intelligence Advisor",
+    "classification": "NOT RELEVANT"
+  },
+  {
+    "id": "54a79a6574686965d9256244",
+    "title": "motorista",
+    "translated_title": "driver",
+    "classification": "NOT RELEVANT"
+  },
+  {
+    "id": "54c253ff74686916391fb18d",
+    "title": "Gerente Geral",
+    "translated_title": "General Manager",
+    "classification": "RELEVANT"
+  },
+  {
+    "id": "54ebd0cc7468694311909e2b",
+    "title": "administração",
+    "translated_title": "Administration",
+    "classification": "NOT RELEVANT"
+  },
+  {
+    "id": "55712e6173696453dc390100",
+    "title": "Cemex",
+    "translated_title": "Cemex",
+    "classification": "NOT RELEVANT"
+  },
+  {
+    "id": "57dbcd4aa6da98686307bead",
+    "title": "aposentado free lance",
+    "translated_title": "Retired freelancer",
+    "classification": "NOT RELEVANT"
+  },
+  {
+    "id": "57dd2c46a6da987b2c9f10c2",
+    "title": "Diretor executivo",
+    "translated_title": "Executive Director",
+    "classification": "RELEVANT"
+  },
+  {
+    "id": "57dd7271a6da987b18746de6",
+    "title": "Professora",
+    "translated_title": "Professor",
+    "classification": "NOT RELEVANT"
+  },
+  {
+    "id": "5c3ea728f651251059b34f6a",
+    "title": "Cemex",
+    "translated_title": "Cemex",
+    "classification": "NOT RELEVANT"
+  },
+  {
+    "id": "612be8535163d20001a1d1ae",
+    "title": "Professor de Português",
+    "translated_title": "Portuguese Professor",
+    "classification": "NOT RELEVANT"
+  },
+  {
+    "id": "6436b0e6dc1a590001ceb443",
+    "title": "Auxiliar de produo",
+    "translated_title": "Production Assistant",
+    "classification": "NOT RELEVANT"
+  },
+  {
+    "id": "6480826f462d4e000178dc5c",
+    "title": "Funcionário público",
+    "translated_title": "Public Servant",
+    "classification": "NOT RELEVANT"
+  },
+  {
+    "id": "660bd31b3d52900008e8e55f",
+    "title": "Digital Marketing Specialist",
+    "translated_title": "Digital Marketing Specialist",
+    "classification": "NOT RELEVANT"
+  },
+  {
+    "id": "66a68f743111710001250b5d",
+    "title": "Lider de Produçaõ",
+    "translated_title": "Production Leader",
+    "classification": "RELEVANT"
+  },
+  {
+    "id": "66f81e245545790001b375ab",
+    "title": "Vendedor",
+    "translated_title": "Salesperson",
+    "classification": "NOT RELEVANT"
+  },
+  {
+    "id": "67232a8499e87400018cf46c",
+    "title": "Servios gerais",
+    "translated_title": "General Services",
+    "classification": "NOT RELEVANT"
+  }
+]
