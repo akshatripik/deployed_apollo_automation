@@ -156,11 +156,21 @@ for i in range(0, len(data), BATCH_SIZE):
             "translated_title": translated,
             "classification": verdict
         })
-        log(f"✅ {entry_count}/{len(data)} | {verdict} | {title}")
+        # log(f"✅ {entry_count}/{len(data)} | {verdict} | {title}")
+        log(f"✅ {entry_count}/{len(data)} | {verdict} | {title} | {translated}")
 
 # === SAVE CLASSIFIED DATA ===
 with open(CLASSIFIED_OUTPUT_FILE, "w", encoding="utf-8") as f:
     json.dump(classified_results, f, indent=2, ensure_ascii=False)
+
+log("💾 Classification complete. Results saved to:")
+print(f"📁 {Path(CLASSIFIED_OUTPUT_FILE).resolve()}")
+
+log("📊 Summary:")
+print(f"• Total entries processed  : {entry_count}")
+print(f"• Total API requests made  : {request_count}")
+print(f"• Output file              : {CLASSIFIED_OUTPUT_FILE}")
+log("🏁 Done.")
 
 # # === KEYWORD EXTRACTION ===
 # def extract_keywords(results, label):
