@@ -104,14 +104,14 @@ for org_id in selected_org_ids:
 # === 7. Save Results and Final API Hit Count ===
 print(f"\n👥 Total people fetched: {len(all_people)}")
 print(f"📊 Total API hits made (including org search): {api_hit_count}")
-with open("full_people_data.json", "w", encoding="utf-8") as f:
+with open("A_full_people_data.json", "w", encoding="utf-8") as f:
     json.dump(all_people, f, indent=2, ensure_ascii=False)
-print("💾 Data saved to 'full_people_data.json'")
+print("💾 Data saved to 'A_full_people_data.json'")
 
 # === 8. Extract Only 'id' and 'title' from Saved Data ===
-filtered_filename = "people_id_title.json"
+filtered_filename = "B_people_id_title.json"
 
-with open("full_people_data.json", "r", encoding="utf-8") as f:
+with open("A_full_people_data.json", "r", encoding="utf-8") as f:
     raw_people = json.load(f)
 
 filtered_people = [{"id": p.get("id"), "title": p.get("title")} for p in raw_people]

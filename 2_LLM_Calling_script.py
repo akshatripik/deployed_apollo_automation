@@ -8,7 +8,7 @@ import getpass
 import os
 
 # === CONFIGURATION ===
-CLASSIFIED_OUTPUT_FILE = "classified_titles.json"
+CLASSIFIED_OUTPUT_FILE = "C_classified_titles.json"
 BATCH_SIZE = 3
 MAX_RPD = 1500
 MAX_RPM = 15  # Free-tier max RPM
