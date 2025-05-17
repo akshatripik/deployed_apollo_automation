@@ -5,6 +5,7 @@ import os
 # === List and Choose JSON File from Directory ===
 def choose_file_from_dir(prompt_text):
     files = [f for f in os.listdir() if f.endswith('.json')]
+    files.sort()  # <-- Add this line to sort alphabetically
     if not files:
         raise Exception("❌ No JSON files found in the current directory.")
 

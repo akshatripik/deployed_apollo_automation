@@ -27,6 +27,7 @@ def log(msg):
 # === LIST JSON FILES ===
 def list_json_files():
     files = [f for f in os.listdir('.') if f.endswith('.json')]
+    files.sort()  # <-- Add this line to sort alphabetically
     if not files:
         print("❌ No JSON files found in this directory.")
         exit()
