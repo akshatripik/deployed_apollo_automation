@@ -162,26 +162,26 @@ for i in range(0, len(data), BATCH_SIZE):
 with open(CLASSIFIED_OUTPUT_FILE, "w", encoding="utf-8") as f:
     json.dump(classified_results, f, indent=2, ensure_ascii=False)
 
-# === KEYWORD EXTRACTION ===
-def extract_keywords(results, label):
-    counter = Counter()
-    for item in results:
-        if item["classification"] == label:
-            tokens = item["title"].lower().replace("/", " ").replace("-", " ").split()
-            counter.update(tokens)
-    top_keywords = counter.most_common(20)
-    print(f"\n🔑 Top 20 {label} Keywords:")
-    for word, count in top_keywords:
-        print(f"{word} ({count})")
-    return [word for word, _ in top_keywords]
+# # === KEYWORD EXTRACTION ===
+# def extract_keywords(results, label):
+#     counter = Counter()
+#     for item in results:
+#         if item["classification"] == label:
+#             tokens = item["title"].lower().replace("/", " ").replace("-", " ").split()
+#             counter.update(tokens)
+#     top_keywords = counter.most_common(20)
+#     print(f"\n🔑 Top 20 {label} Keywords:")
+#     for word, count in top_keywords:
+#         print(f"{word} ({count})")
+#     return [word for word, _ in top_keywords]
 
-include_keywords = extract_keywords(classified_results, "RELEVANT")
-exclude_keywords = extract_keywords(classified_results, "NOT RELEVANT")
+# include_keywords = extract_keywords(classified_results, "RELEVANT")
+# exclude_keywords = extract_keywords(classified_results, "NOT RELEVANT")
 
-with open("include_keywords.txt", "w", encoding="utf-8") as f:
-    f.write("\n".join(include_keywords))
+# with open("include_keywords.txt", "w", encoding="utf-8") as f:
+#     f.write("\n".join(include_keywords))
 
-with open("exclude_keywords.txt", "w", encoding="utf-8") as f:
-    f.write("\n".join(exclude_keywords))
+# with open("exclude_keywords.txt", "w", encoding="utf-8") as f:
+#     f.write("\n".join(exclude_keywords))
 
-log("🏁 Done. Unified classification and keywords saved.")
+# log("🏁 Done. Unified classification and keywords saved.")
