@@ -36,10 +36,14 @@ def save_json(data, filename):
 
 # === Save CSV ===
 def save_csv(data, filename):
+    # Exclude 'id' from CSV output
+    fieldnames = ["first_name", "last_name", "linkedin_url", "organization_name"]
     with open(filename, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=["id", "first_name", "last_name", "linkedin_url", "organization_name"])
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
-        writer.writerows(data)
+        for row in data:
+            # Only write the required fields
+            writer.writerow({k: row.get(k, "") for k in fieldnames})
 
 # === Main Workflow ===
 def main():
@@ -48,7 +52,7 @@ def main():
     classification_data = load_json(classification_file)
 
     # Step 2: Filter for RELEVANT IDs
-    relevant_ids = {entry["id"] for entry in classification_data if entry["classification"] == "RELEVANT"}
+    relevant_ids = {entry["id"] for entry in classification_data if entry.get("classification") == "RELEVANT"}
 
     # Step 3: Load People Data File
     people_file = choose_file_from_dir("People")
@@ -57,7 +61,7 @@ def main():
     # Step 4: Filter and extract required fields
     final_data = []
     for person in people_data:
-        if person["id"] in relevant_ids:
+        if person.get("id") in relevant_ids:
             org_name = None
             if isinstance(person.get("employment_history"), list) and person["employment_history"]:
                 org_name = person["employment_history"][0].get("organization_name")
@@ -71,8 +75,8 @@ def main():
 
     # Step 5: Export JSON and CSV
     save_json(final_data, "D_filtered_relevant_entries.json")
-    save_csv(final_data, "D_filtered_relevant_entries.csv")
-    print("\n🎉 Files saved as 'D_filtered_relevant_entries.json' and 'D_filtered_relevant_entries.csv'")
+    save_csv(final_data, "E_filtered_relevent_entries.csv")
+    print("\n🎉 Files saved as 'D_filtered_relevant_entries.json' and 'E_filtered_relevent_entries.csv'")
 
 if __name__ == "__main__":
     main()

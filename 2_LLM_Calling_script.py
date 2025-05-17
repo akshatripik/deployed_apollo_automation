@@ -146,19 +146,22 @@ for i in range(0, len(data), BATCH_SIZE):
     log(f"📡 Gemini API request #{request_count}")
 
     for j, result in enumerate(results):
-        entry_count += 1
+        # Use zero-based index for the entry
+        idx = len(classified_results)
+        idx_str = f"{idx:05d}"
         id_ = ids[j]
         title = titles[j]
         translated = result.get("translated_title", "")
         verdict = result.get("verdict", "ERROR")
         classified_results.append({
+            "index": idx_str,
             "id": id_,
             "title": title,
             "translated_title": translated,
             "classification": verdict
         })
-        # log(f"✅ {entry_count}/{len(data)} | {verdict} | {title}")
-        log(f"✅ {entry_count}/{len(data)} | {verdict} | {title} | {translated}")
+        log(f"✅ {idx_str} | {verdict} | {translated} | {title}")
+    entry_count += len(results)  # <-- Add this line
 
 # === SAVE CLASSIFIED DATA ===
 with open(CLASSIFIED_OUTPUT_FILE, "w", encoding="utf-8") as f:
