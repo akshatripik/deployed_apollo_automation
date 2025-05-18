@@ -1,1 +1,1 @@
-# 🧠 LeadGen Automation & Job Title Classifier Toolkit
+# 🧠 QualiFind - LeadGen Automation & Job Title Classifier Toolkit
