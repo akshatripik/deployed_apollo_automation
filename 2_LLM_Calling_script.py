@@ -61,32 +61,39 @@ except Exception as e:
 # === GEMINI CLASSIFICATION ===
 def classify_batch(titles, retry_attempts=RETRY_ATTEMPTS):
     prompt = f"""
-You are an assistant working for a Vision AI startup that builds AI agents to monitor equipment, materials, and processes in large manufacturing industries such as cement, steel, and metal production.
+You work for a Vision AI startup that builds AI agents to monitor equipment, materials, and processes in manufacturing industries like cement, steel, and metals.
 
-We want to classify each of the job titles provided below as either **RELEVANT** or **NOT RELEVANT** for outreach purposes.
+Classify each job title as either **RELEVANT** or **NOT RELEVANT** for outreach.
 
 **Instructions:**
 
-1. Classify a title as **RELEVANT** only if:
-   - The title suggests the person holds **middle management or higher** authority (e.g., Manager, Head, VP, Director, CXO). Do **not** include entry-level roles, field workers, or interns.
-   - The person works in one of the following **functional domains**, which align with KPIs that our Vision AI product helps improve:
-     - Process Engineering / Process Optimization
-     - Product Engineering / Product Development
-     - Melt Shop / Steel Shop / Furnace Operations (in steel and metal industries)
-     - Maintenance (Mechanical / Electrical / Instrumentation)
-     - Plant / Factory / Site Safety
-     - Digitization / Digital Factory / Industry 4.0
-     - Procurement / Sourcing / Vendor Management
+1. Mark a title as **RELEVANT** only if:
+   - The person is **white collar roles** **middle management or higher** (e.g. Inspector, Supervisor, Engineer, Manager, Head, VP, Director, CXO). Exclude interns, field workers or **blue-collar roles**. Focus only on **white-collar roles**.
+   - The person works in one of the following relevant domains:
 
-2. If the title **clearly indicates seniority** (e.g., “Manager”, “Head”, “Director”) **but does not mention the department**, classify it as **RELEVANT**, because such people often influence purchasing and digital adoption decisions.
+     - **Operations**: plant manager, operations, production, manufacturing head, shift incharge, 
+     - **Maintenance**: maintenance, mechanical, electrical, technician, reliability
+     - **Process**: process, optimization, optimisation  
+     - **Quality**: quality, QA, QC, compliance  
+     - **Safety**: safety, HSE, EHS  
+     - **R&D**: R&D, research, development  
+     - **Procurement**: procurement, purchase, buyer, sourcing  
+     - **Projects**: project, capex, engineering manager  
+     - **Automation**: automation, instrumentation, control systems  
+     - **IT/Digital**: digital, IT, data, AI, ML, software, innovation  
+     - **Leadership**: chief, CEO, COO, CTO, president, VP, director
 
-3. However, if the title includes seniority **but belongs to irrelevant departments** like HR, Admin, Legal, Finance, Talent, or Marketing (e.g., “HR Manager”, “Admin Head”), classify it as **NOT RELEVANT**.
+2. Titles with clear **seniority** but **no department mentioned** are **RELEVANT** by default, as such roles often influence purchasing and digital adoption.
 
-4. Use your **reasoning ability** to evaluate the title holistically. **Do not rely solely on keyword matching**. A generic title like “Manager” is acceptable, but “Finance Manager” is not.
+3. Titles from **irrelevant departments** (HR, Admin, Legal, Finance, Talent, Marketing) are **NOT RELEVANT**, even if senior.
 
-5. If the title is in a non-English language, translate it into English.
+4. Apply reasoning—don’t rely solely on keywords. For example, “Manager” is relevant, but “Finance Manager” is not.
 
-Return your response as a JSON list in the following format:
+5. Translate non-English titles before classification.
+
+6. All titles that **end** with the word **analyst** are **NOT RELEVANT**.
+**Output Format:**
+Return a JSON list like:
 [
   {{
     "original_title": "...",
@@ -95,7 +102,6 @@ Return your response as a JSON list in the following format:
   }},
   ...
 ]
-
 Here are the titles:
 {json.dumps(titles, ensure_ascii=False)}
 """
