@@ -130,14 +130,30 @@ Here are the titles:
                 break
     return [{"original_title": t, "translated_title": "", "verdict": "ERROR"} for t in titles]
 
-# === PROCESSING ===
+# === HANDLE EXISTING CLASSIFIED FILE ===
 classified_results = []
+processed_ids = set()
 request_count = 0
 entry_count = 0
+
+if os.path.exists(CLASSIFIED_OUTPUT_FILE):
+    resume_choice = input("🧩 A classification file already exists. Resume from it? (y/n): ").strip().lower()
+    if resume_choice == "y":
+        with open(CLASSIFIED_OUTPUT_FILE, "r", encoding="utf-8") as f:
+            classified_results = json.load(f)
+        processed_ids = set(entry["id"] for entry in classified_results)
+        log(f"🔁 Resuming. Already classified: {len(processed_ids)} entries.")
+    else:
+        open(CLASSIFIED_OUTPUT_FILE, "w").close()
+        log("🧹 Starting fresh. Previous file has been cleared.")
 
 log(f"🔍 Starting classification in batches of {BATCH_SIZE}...")
 
 for i in range(0, len(data), BATCH_SIZE):
+    batch = data[i:i + BATCH_SIZE]
+    batch = [entry for entry in batch if entry["id"] not in processed_ids]
+    if not batch:
+        continue
     if request_count >= MAX_RPD:
         log("🛑 Max daily request limit (1500) reached. Stopping.")
         break
@@ -166,8 +182,15 @@ for i in range(0, len(data), BATCH_SIZE):
             "translated_title": translated,
             "classification": verdict
         })
+
+        # ✅ Real-time save after every entry
+        with open(CLASSIFIED_OUTPUT_FILE, "w", encoding="utf-8") as f:
+            json.dump(classified_results, f, indent=2, ensure_ascii=False)
+
+        # ✅ Log every entry properly
         log(f"✅ {idx_str} | {verdict} | {translated} | {title}")
-    entry_count += len(results)  # <-- Add this line
+
+    entry_count += len(results)
 
 # === SAVE CLASSIFIED DATA ===
 with open(CLASSIFIED_OUTPUT_FILE, "w", encoding="utf-8") as f:
