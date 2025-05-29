@@ -5,7 +5,7 @@ import os
 # === List and Choose JSON File from Directory ===
 def choose_file_from_dir(prompt_text):
     files = [f for f in os.listdir() if f.endswith('.json')]
-    files.sort()  # <-- Add this line to sort alphabetically
+    files.sort()
     if not files:
         raise Exception("❌ No JSON files found in the current directory.")
 
@@ -36,13 +36,11 @@ def save_json(data, filename):
 
 # === Save CSV ===
 def save_csv(data, filename):
-    # Exclude 'id' from CSV output
-    fieldnames = ["first_name", "last_name", "linkedin_url", "organization_name"]
+    fieldnames = ["id", "first_name", "last_name", "linkedin_url", "organization_name", "title", "translated_title"]
     with open(filename, 'w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         for row in data:
-            # Only write the required fields
             writer.writerow({k: row.get(k, "") for k in fieldnames})
 
 # === Main Workflow ===
@@ -51,29 +49,38 @@ def main():
     classification_file = choose_file_from_dir("Classification")
     classification_data = load_json(classification_file)
 
-    # Step 2: Filter for RELEVANT IDs
-    relevant_ids = {entry["id"] for entry in classification_data if entry.get("classification") == "RELEVANT"}
+    # Step 2: Build map of RELEVANT entries
+    relevant_map = {
+        entry["id"]: {
+            "title": entry.get("title", ""),
+            "translated_title": entry.get("translated_title", "")
+        }
+        for entry in classification_data if entry.get("classification") == "RELEVANT"
+    }
 
     # Step 3: Load People Data File
     people_file = choose_file_from_dir("People")
     people_data = load_json(people_file)
 
-    # Step 4: Filter and extract required fields
+    # Step 4: Filter and enrich with classification titles
     final_data = []
     for person in people_data:
-        if person.get("id") in relevant_ids:
-            org_name = None
+        person_id = person.get("id")
+        if person_id in relevant_map:
+            org_name = ""
             if isinstance(person.get("employment_history"), list) and person["employment_history"]:
-                org_name = person["employment_history"][0].get("organization_name")
+                org_name = person["employment_history"][0].get("organization_name", "")
             final_data.append({
-                "id": person.get("id", ""),
+                "id": person_id,
                 "first_name": person.get("first_name", ""),
                 "last_name": person.get("last_name", ""),
                 "linkedin_url": person.get("linkedin_url", ""),
-                "organization_name": org_name or ""
+                "organization_name": org_name,
+                "title": relevant_map[person_id].get("title", ""),
+                "translated_title": relevant_map[person_id].get("translated_title", "")
             })
 
-    # Step 5: Export JSON and CSV
+    # Step 5: Save Outputs
     save_json(final_data, "D_filtered_relevant_entries.json")
     save_csv(final_data, "E_filtered_relevent_entries.csv")
     print("\n🎉 Files saved as 'D_filtered_relevant_entries.json' and 'E_filtered_relevent_entries.csv'")
