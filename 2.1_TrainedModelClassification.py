@@ -33,19 +33,37 @@ model = joblib.load("relevance_rf_model.pkl")
 vectorizer = joblib.load("translated_title_vectorizer.pkl")
 translator = GoogleTranslator(source='auto', target='en')
 
-# === Step 3: Translate, Score, and Save Live to JSON ===
+# === Step 3: Handle Output Resume ===
 output_json = "C_classified_titles.json"
 final_entries = []
-total_entries = len(raw_data)
+processed_ids = set()
+start_index = 0
 
+if os.path.exists(output_json):
+    resume = input(f"\n📄 Output file '{output_json}' already exists. Do you want to continue from where it left off? (yes/no): ").strip().lower()
+    if resume == "yes":
+        with open(output_json, 'r', encoding='utf-8') as jf:
+            final_entries = json.load(jf)
+        processed_ids = {entry["id"] for entry in final_entries}
+        raw_data = [entry for entry in raw_data if entry.get("id") not in processed_ids]
+        start_index = len(final_entries)
+        print(f"\n🔁 Resuming processing from entry {start_index + 1}. {len(raw_data)} new entries found.")
+    else:
+        print("⚠️ Starting fresh. Existing output file will be overwritten.")
+        final_entries = []
+else:
+    print(f"🆕 Output file '{output_json}' will be created.")
+
+# === Step 4: Translate, Score, and Save ===
+total_entries = len(raw_data)
 print(f"\n🌍 Translating & Scoring {total_entries} entries...\n")
 
 with open(output_json, 'w', encoding='utf-8') as jf:
-    for i, entry in enumerate(raw_data):
+    for i, entry in enumerate(raw_data, start=start_index):
         title = entry.get("title", "")
         index_str = f"{i:05d}"
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        entry_no = f"[{i+1}/{total_entries}]"
+        entry_no = f"[{i+1}/{start_index + total_entries}]"
 
         translated_title = ""
         score = "N/A"
@@ -84,9 +102,9 @@ with open(output_json, 'w', encoding='utf-8') as jf:
         json.dump(final_entries, jf, ensure_ascii=False, indent=2)
         jf.truncate()
 
-print(f"\n💾 Initial translation complete. Output saved to: {output_json}")
+print(f"\n💾 Translation complete. Output saved to: {output_json}")
 
-# === Step 4: Retry Failed Translations ===
+# === Step 5: Retry Failed Translations ===
 print("\n🔁 Retrying failed translations...\n")
 retry_count = 0
 
@@ -103,13 +121,12 @@ for entry in final_entries:
         except Exception as e:
             print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} [Index {entry['index']}] ❌ RETRY FAILED | {entry['title']} — {e}")
 
-# Save updated translations after retry
 with open(output_json, 'w', encoding='utf-8') as jf:
     json.dump(final_entries, jf, ensure_ascii=False, indent=2)
 
 print(f"\n✅ Retry complete. {retry_count} entries successfully re-translated.\n")
 
-# === Step 5: Post-processing Keyword Matching ===
+# === Step 6: Post-processing Keyword Matching ===
 keywords = [
     "AUDIT", "AUDITOR", "AUDITING", "TAX", "TAXATION", "TAX ADVISOR",
     "LEGAL", "LAWYER", "ATTORNEY", "PARALEGAL", "ACCOUNT MANAGER", "CLIENT MANAGER",
@@ -119,7 +136,8 @@ keywords = [
     "DIGITAL MARKETING", " CONTENT ", "BUSINESS DEVELOPMENT", "BIZ DEV",
     " BD ", " BD ", "SALES", "SELLING", "SALES EXECUTIVE", "ACCOUNT EXECUTIVE",
     "TERRITORY MANAGER", "COMMERCIAL MANAGER", "COMMERCIAL LEAD", "TRADE MANAGER",
-    "TALENT ACQUISITION", "RECRUITER", "HIRING MANAGER", "FINANCIAL", "FINANCE", "PUBLIC RELATIONS", "PUBLIC AFFAIRS"]
+    "TALENT ACQUISITION", "RECRUITER", "HIRING MANAGER", "FINANCIAL", "FINANCE", "PUBLIC RELATIONS", "PUBLIC AFFAIRS"
+]
 
 print("🔍 Starting keyword matching...\n")
 modified_count = 0
@@ -142,7 +160,6 @@ for entry in final_entries:
     if not matched:
         print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} [Index {entry['index']}] ⏭️ No keyword match found.")
 
-# Final write after keyword update
 with open(output_json, 'w', encoding='utf-8') as jf:
     json.dump(final_entries, jf, ensure_ascii=False, indent=2)
 
